@@ -118,4 +118,4 @@ If the mainDevice detects an unexpected hop number it immediately switches back 
 
 3 Loopback packet type
 This packet type indicated that it has been looped back by an open port on the last SD device on the chain.  The FCS will have been recalculated and will not be monitored or altered by the other SD devices in the chain.  If a master port encounters this type of packet it will automatically switch ports.
-![image](https://github.com/Logixell/logixell.github.io/assets/88789304/632c9a9c-9bbb-48ce-a286-86236634e0b1)
+
