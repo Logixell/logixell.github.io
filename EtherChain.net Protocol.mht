@@ -1,0 +1,706 @@
+MIME-Version: 1.0
+Content-Location: file:///C:/65791A4C/EtherChain.netProtocol.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="utf-8"
+
+<html xmlns:o=3D"urn:schemas-microsoft-com:office:office"
+xmlns:dt=3D"uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<meta name=3DProgId content=3DOneNote.File>
+<meta name=3DGenerator content=3D"Microsoft OneNote 15">
+<link id=3DMain-File rel=3DMain-File href=3DEtherChain.netProtocol.htm>
+<link rel=3DFile-List href=3D"EtherChain.netProtocol_files/filelist.xml">
+</head>
+
+<body lang=3Den-CA style=3D'font-family:Calibri;font-size:11.0pt'>
+
+<div style=3D'direction:ltr;border-width:100%'>
+
+<div style=3D'direction:ltr;margin-top:0in;margin-left:0in;width:7.6791in'>
+
+<div style=3D'direction:ltr;margin-top:0in;margin-left:.075in;width:3.2319i=
+n'>
+
+<p style=3D'margin:0in;font-family:"Calibri Light";font-size:20.0pt' lang=
+=3Den-US>EtherChain.net
+Protocol</p>
+
+</div>
+
+<div style=3D'direction:ltr;margin-top:.0388in;margin-left:.075in;width:1.7=
+923in'>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:10.0pt;color:#767676'>=
+May
+13, 2024</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:10.0pt;color:#767676'>=
+11:56
+AM</p>
+
+</div>
+
+<div style=3D'direction:ltr;margin-top:.4305in;margin-left:0in;width:7.6791=
+in'>
+
+<h1 style=3D'margin:0in;font-family:Calibri;font-size:16.0pt;color:#1E4E79'
+lang=3Den-US>EtherChain.net protocol</h1>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Acronyms</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>M=
+D : Main
+Device (Master)</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+D<span
+style=3D'mso-spacerun:yes'>   </span>: Secondary Device (Slave)</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+PE :
+Single Pair Ethernet</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Overview</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therChain
+is a Ultra-low latency point to multipoint communication protocol.<span
+style=3D'mso-spacerun:yes'>  </span>It is used to setup a full duplex Virt=
+ual
+Communications channel from the MD to all the SD devices over one Single Pa=
+ir
+Ethernet (SPE) cable.<span style=3D'mso-spacerun:yes'>  </span>The SD (Sec=
+ondary
+Device) devices are connected to the MD (Main Device) in a daisy chain
+configuration.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>L=
+ow cost
+is the driving factor of EtherChain.<span style=3D'mso-spacerun:yes'> 
+</span>This includes component cost,<span style=3D'mso-spacerun:yes'>  </s=
+pan>CPU
+Processing power, Power Consumption and complexity.<span
+style=3D'mso-spacerun:yes'>  </span>Labor is typically the highest cost in=
+ a
+system.<span style=3D'mso-spacerun:yes'>  </span>If the system is so compl=
+ex that
+only few people can understand it then the system cost goes up
+dramatically.<span style=3D'mso-spacerun:yes'>  </span>Therefore simplicit=
+y must
+be considered before adding features that increase complexity.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Target Application</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therChain
+has been designed for multiple axis machine control such as 3D printers and
+robot arms.<span style=3D'mso-spacerun:yes'>  </span>These types of machin=
+es
+require synchronous control of multiple motors.<span style=3D'mso-spacerun:=
+yes'> 
+</span>Any network delay in these type of machines would cause motion
+error.<span style=3D'mso-spacerun:yes'>  </span>EtherChain subDevices are =
+time
+synchronized to the mainDevice to be able to transfer Step and Direction pu=
+lses
+for stepper motors or servos with minimal delay and skew.<span
+style=3D'mso-spacerun:yes'>  </span>In order to minimize frame overhead, t=
+he
+traditional ethernet frame header has been removed with the exception of the
+Frame Check Sequence (FCS) for error detection.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Phy Interfaces</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therChain
+protocol supports Single Pair Ethernet (SPE) 100BaseT1 and 10BaseT1L phy
+interfaces.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+00BaseT1
+chain link length 15meters</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+0BaseT1L
+chain link length 2000meters</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>B=
+ased on
+EtherCat type daisy chain cut through data.<span style=3D'mso-spacerun:yes'=
+> 
+</span>Data looped back at end of chain.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Serial over EtherChain</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>I=
+<span
+style=3D'vertical-align:super'>2</span>C is a common interface for sensors =
+and
+peripherals.<span style=3D'mso-spacerun:yes'>  </span>However, the distanc=
+e of
+this interface is limited.<span style=3D'mso-spacerun:yes'>  </span><span
+style=3D'font-weight:bold'>This may not be possible due to the short turnar=
+ound
+times required for I2C reads.</span></p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>=
+&nbsp;</h2>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>EtherChain vs Ethernet</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+he
+difference between standard Ethernet and EtherChain is that Ethernet
+connections are made in a point to point star connection and require a swit=
+ch
+or router.<span style=3D'mso-spacerun:yes'>  </span>EtherChain on the othe=
+r hand
+is connected in a Daisy Chain fashion and does not require any switch.<span
+style=3D'mso-spacerun:yes'>  </span>One chain consists of one MD connected=
+ to
+multiple SD's.<span style=3D'mso-spacerun:yes'>  </span>Direct communicati=
+on
+between SD's is not possible. </p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>EthterChain vs EtherCat</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therChain
+is a very low latency Protocol similar to EtherCat used in industrial setti=
+ngs
+but without the burden of being backwards compatible with other industrial
+protocols.<span style=3D'mso-spacerun:yes'>  </span>This allows for an
+inexpensive lightweight and easy to understand interface.<span
+style=3D'mso-spacerun:yes'>  </span>Unlike EtherCat, EtherChain does not s=
+upport
+3 port devices for network branching.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Single Pair Ethernet</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+ince the
+SPE interface requires a bridge to connect to a standard Ethernet network, =
+the
+Ethernet header can be removed from the SPE network to save bandwidth.<span
+style=3D'mso-spacerun:yes'>  </span>An EtherChain packet will go to every =
+node
+thus making the use of MAC addresses unnecessary.<span
+style=3D'mso-spacerun:yes'>  </span>The EtherChain can be connected to an
+Ethernet network though a bridge protocol on the master device which transl=
+ates
+the data into standard Ethernet packets.<span style=3D'mso-spacerun:yes'> 
+</span>However care must be taken that all time critical data is processed =
+in
+the Master device in order to maintain the key benefit of EtherChain which =
+is
+time synchronization.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+upports
+Distributed Clock for synchronizing all the slaves to the master clock.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>O=
+SI runs
+at the physical layer.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therCat
+State machine: Init, Pre-Op, Safe-op, operational, (bootstrap for upgrades)=
+</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+SC:
+Ethercat Slave Controller</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>M=
+aster=3DmainDevice</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+lave=3DSecondaryDevice
+</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US><=
+span
+style=3D'mso-spacerun:yes'> </span></p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>P=
+acket
+Type</p>
+
+<div style=3D'direction:ltr'>
+
+<table border=3D1 cellpadding=3D0 cellspacing=3D0 valign=3Dtop style=3D'dir=
+ection:ltr;
+ border-collapse:collapse;border-style:solid;border-color:#A3A3A3;border-wi=
+dth:
+ 1pt' title=3D"" summary=3D"">
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.9694in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>Packet
+  Type</p>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>Number</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8597in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>Description</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>0</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8791in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>IDLE
+  packet</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>1</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8756in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>INIT
+  packet</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+ <tr>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.95in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+  <td style=3D'border-style:solid;border-color:#A3A3A3;border-width:1pt;
+  vertical-align:top;width:.8097in;padding:2.0pt 3.0pt 2.0pt 3.0pt'>
+  <p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US=
+>&nbsp;</p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>R=
+uns on
+IEEE 802.3bw (BroadR-Reach) PHY</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>B=
+ased on
+EtherCat type daisy chain cut through data.<span style=3D'mso-spacerun:yes'=
+> 
+</span>Data looped back at end of chain.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>E=
+therchain
+frame:</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>7=
+ bytes
+Start of Frame: 10101010</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+Start of Frame Delimiter: 10101011</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+Packet type</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+packet sequence number (rollover) used for detecting lost packets</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+hop number (gets incremented every time the packet is retransmitted to the =
+next
+level)</p>
+
+<p style=3D'margin:0in;margin-left:.375in;font-family:Calibri;font-size:11.=
+0pt'
+lang=3Den-US>2 bytes datagram address</p>
+
+<p style=3D'margin:0in;margin-left:.375in;font-family:Calibri;font-size:11.=
+0pt'
+lang=3Den-US>1 byte<span style=3D'mso-spacerun:yes'>  </span>MD datagram l=
+ength</p>
+
+<p style=3D'margin:0in;margin-left:.375in;font-family:Calibri;font-size:11.=
+0pt'
+lang=3Den-US>1 byte<span style=3D'mso-spacerun:yes'>  </span>MD write leng=
+th</p>
+
+<p style=3D'margin:0in;margin-left:.375in;font-family:Calibri;font-size:11.=
+0pt'
+lang=3Den-US>1 byte<span style=3D'mso-spacerun:yes'>    </span>SD write =
+length</p>
+
+<p style=3D'margin:0in;margin-left:.375in;font-family:Calibri;font-size:11.=
+0pt'
+lang=3Den-US>Y bytes of hop X datagram</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>�=
+��</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>4=
+ bytes
+CRC/FCS frame check</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+2 bytes
+Interframe Gap</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>Datagram</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+type</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+ype 01
+datagram Write to register</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US><=
+span
+style=3D'mso-spacerun:yes'>  </span>1 byte address</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US><=
+span
+style=3D'mso-spacerun:yes'>  </span>X bytes data (address increments)</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+ype 02
+datagram write to comm fifo</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h3 style=3D'margin:0in;font-family:Calibri;font-size:12.0pt;color:#5B9BD5'
+lang=3Den-US>0 IDLE packet type</h3>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+his
+packet does not contain any datagrams.<span style=3D'mso-spacerun:yes'> 
+</span>When a SD receives this packet it must immediately go to IDLE
+state.<span style=3D'mso-spacerun:yes'>  </span>This is used to determine =
+the
+number of hops in the loop.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h3 style=3D'margin:0in;font-family:Calibri;font-size:12.0pt;color:#5B9BD5'
+lang=3Den-US>1 INIT packet type</h3>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+his
+packet contains the same datagram format as the Run packet type except that=
+ it
+is only used for reading and writing initialization registers.<span
+style=3D'mso-spacerun:yes'>  </span>255 bytes of data which are all set to=
+ 0 by
+the master.<span style=3D'mso-spacerun:yes'>  </span>The slaves will then =
+insert
+their subDevice ID number into the appropriate byte which corresponds to the
+hop number.<span style=3D'mso-spacerun:yes'>  </span>If a slave does not h=
+ave an
+ID assigned yet it will insert 0.<span style=3D'mso-spacerun:yes'>  </span=
+>The
+master must then assign it a proper number.<span style=3D'mso-spacerun:yes'=
+> 
+</span>Once the master receives a packet with all the proper ID's it can go=
+ to
+the next state.<span style=3D'mso-spacerun:yes'>  </span>The slave will ta=
+ke note
+of its hop number and respond to that hop.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>F=
+ormat:</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+Number of Hops detected by the previous poll</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h3 style=3D'margin:0in;font-family:Calibri;font-size:12.0pt;color:#5B9BD5'
+lang=3Den-US>2 RUN packet type</h3>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+his
+packet is used to communicate with individual subDevices.<span
+style=3D'mso-spacerun:yes'>  </span>It is like a virtual COM port to each
+subDevice.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>F=
+ormat:</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte SD
+interrupt register</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>2=
+ bytes
+registers</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+COM length<span style=3D'mso-spacerun:yes'>  </span>//of hop 1</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ to 255
+bytes data</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>2=
+ bytes
+registers</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ byte
+COM length //of hop 2</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>1=
+ to 255
+bytes data</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>�=
+��</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>I=
+nterrupt
+Register</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>4
+Interrupt bits (MD writing to these bits will clear them)</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>4=
+ bits
+COM request (Request next data packet size X 4)</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>s=
+ubDevice
+bandwidth request.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>W=
+hen a
+subDevice has data to send to the master it will buffer the data in a fifo =
+and
+enter the fill level into the appropriate Hop Length field so that the
+MainDevice will increase the HopLength in the next frame.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>S=
+D write
+request</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+he Read
+length is the amount of data in the slave fifo.<span style=3D'mso-spacerun:=
+yes'> 
+</span>If this is larger than the write length then the amount of data sent=
+ is
+equal to the write length.<span style=3D'mso-spacerun:yes'>  </span>The ma=
+ster
+will then subtract the read length from the write length and if there is a
+remainder (negative) it will increase the datagram size by that amount on t=
+he
+next frame.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>I=
+f the
+mainDevice detects an unexpected hop number it immediately switches back to
+init state and all subDevices go into init mode.</p>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>&=
+nbsp;</p>
+
+<h2 style=3D'margin:0in;font-family:Calibri;font-size:14.0pt;color:#2E75B5'
+lang=3Den-US>3 Loopback packet type</h2>
+
+<p style=3D'margin:0in;font-family:Calibri;font-size:11.0pt' lang=3Den-US>T=
+his
+packet type indicated that it has been looped back by an open port on the l=
+ast
+SD device on the chain.<span style=3D'mso-spacerun:yes'>  </span>The FCS w=
+ill
+have been recalculated and will not be monitored or altered by the other SD
+devices in the chain.<span style=3D'mso-spacerun:yes'>  </span>If a master=
+ port
+encounters this type of packet it will automatically switch ports.</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+<p style=3D'margin:0in'>&nbsp;</p>
+
+<p style=3D'text-align:left;margin:0in;font-family:Arial;font-size:9pt;
+color:#969696;direction:ltr'>Created with OneNote.</p>
+
+</div>
+
+</body>
+
+</html>
