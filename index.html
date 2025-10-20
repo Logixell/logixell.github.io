@@ -1,628 +1,127 @@
-<html>
+<h1>EtherMUX Protocol Documentation</h1>
 
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=Generator content="Microsoft Word 15 (filtered)">
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:8.0pt;
-	margin-left:0cm;
-	line-height:115%;
-	font-size:12.0pt;
-	font-family:"Aptos",sans-serif;}
-.MsoPapDefault
-	{margin-bottom:8.0pt;
-	line-height:115%;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
--->
-</style>
+<h2>Acronyms</h2>
+<ul>
+  <li><strong>MD</strong>: Main Device (Master)</li>
+  <li><strong>SD</strong>: Secondary Device (Slave)</li>
+  <li><strong>SPE</strong>: Single Pair Ethernet</li>
+</ul>
+<hr>
 
-</head>
+<h2>Overview</h2>
+<p><strong>EtherMUX</strong> is an open-source, ultra-low latency, point-to-multipoint communication protocol. It simplifies system wiring by multiplexing signals onto a single pair of wires.</p>
+<ul>
+  <li>Supports up to <strong>64 general-purpose signals</strong> and <strong>254 virtual COM ports</strong></li>
+  <li>Establishes a <strong>full-duplex virtual communication channel</strong> from the <strong>MD</strong> to all <strong>SD</strong> devices over a single twisted pair <strong>SPE</strong> cable</li>
+  <li>Devices are connected in a <strong>daisy chain configuration</strong> (no switch is required)</li>
+</ul>
+<hr>
 
-<body lang=EN-CA style='word-wrap:break-word'>
+<h2>Target Applications</h2>
+<p>Designed for <strong>multi-axis machine control</strong> such as:</p>
+<ul>
+  <li>ðŸ–¨ï¸ 3D printers</li>
+  <li>ðŸ¤– Robotic arms</li>
+</ul>
+<p>These systems require <strong>synchronous motor control</strong> with minimal delay and skew. EtherMUX ensures:</p>
+<ul>
+  <li>Time synchronization between MD and SD devices</li>
+  <li>Reliable transfer of <strong>Step</strong> and <strong>Direction</strong> pulses for stepper motors and servos</li>
+  <li>Reduced frame overhead by removing traditional Ethernet headers (except for <strong>Frame Check Sequence (FCS)</strong>)</li>
+</ul>
+<hr>
 
-<div class=WordSection1>
+<h2>Ultra-Low Latency</h2>
+<p>Traditional Ethernet uses a <strong>store-and-forward</strong> approach, introducing latency as packets are assembled and routed through switches. EtherMUX avoids this by:</p>
+<ul>
+  <li>Using cut-through forwarding</li>
+  <li>Eliminating unnecessary headers</li>
+  <li>Maintaining tight timing for motion-critical applications</li>
+</ul>
+<hr>
 
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:16.0pt;font-family:"Calibri",sans-serif;color:#1E4E79'>EtherChain.net
-protocol</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Acronyms</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>MD : Main
-Device (Master)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>SD   :
-Secondary Device (Slave)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>SPE :
-Single Pair Ethernet</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Overview</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>EtherChain
-is a Ultra-low latency point to multipoint communication protocol.  It is used
-to setup a full duplex Virtual Communications channel from the MD to all the SD
-devices over one Single Pair Ethernet (SPE) cable.  The SD (Secondary Device)
-devices are connected to the MD (Main Device) in a daisy chain configuration.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Low cost is
-the driving factor of EtherChain.  This includes component cost,  CPU
-Processing power, Power Consumption and complexity.  Labor is typically the
-highest cost in a system.  If the system is so complex that only few people can
-understand it then the system cost goes up dramatically.  Therefore simplicity
-must be considered before adding features that increase complexity.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Target
-Application</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>EtherChain
-has been designed for multiple axis machine control such as 3D printers and
-robot arms.  These types of machines require synchronous control of multiple
-motors.  Any network delay in these type of machines would cause motion error. 
-EtherChain subDevices are time synchronized to the mainDevice to be able to
-transfer Step and Direction pulses for stepper motors or servos with minimal
-delay and skew.  In order to minimize frame overhead, the traditional ethernet
-frame header has been removed with the exception of the Frame Check Sequence
-(FCS) for error detection.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Phy
-Interfaces</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>EtherChain
-protocol supports Single Pair Ethernet (SPE) 100BaseT1 and 10BaseT1L phy
-interfaces.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>100BaseT1
-chain link length 15meters</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>10BaseT1L
-chain link length 2000meters</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Based on
-EtherCat type daisy chain cut through data.  Data looped back at end of chain.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Serial
-over EtherChain</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>I<sup>2</sup>C
-is a common interface for sensors and peripherals.  However, the distance of
-this interface is limited.  <b>This may not be possible due to the short
-turnaround times required for I2C reads.</b></span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>EtherChain
-vs Ethernet</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>The difference
-between standard Ethernet and EtherChain is that Ethernet connections are made
-in a point to point star connection and require a switch or router.  EtherChain
-on the other hand is connected in a Daisy Chain fashion and does not require
-any switch.  One chain consists of one MD connected to multiple SD's.  Direct
-communication between SD's is not possible. </span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>EthterChain
-vs EtherCat</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>EtherChain
-is a very low latency Protocol similar to EtherCat used in industrial settings
-but without the burden of being backwards compatible with other industrial
-protocols.  This allows for an inexpensive lightweight and easy to understand
-interface.  Unlike EtherCat, EtherChain does not support 3 port devices for
-network branching.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Single
-Pair Ethernet</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Since the
-SPE interface requires a bridge to connect to a standard Ethernet network, the
-Ethernet header can be removed from the SPE network to save bandwidth.  An
-EtherChain packet will go to every node thus making the use of MAC addresses
-unnecessary.  The EtherChain can be connected to an Ethernet network though a
-bridge protocol on the master device which translates the data into standard
-Ethernet packets.  However care must be taken that all time critical data is
-processed in the Master device in order to maintain the key benefit of
-EtherChain which is time synchronization.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Supports
-Distributed Clock for synchronizing all the slaves to the master clock.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>OSI runs
-at the physical layer.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>EtherCat State
-machine: Init, Pre-Op, Safe-op, operational, (bootstrap for upgrades)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>ESC:
-Ethercat Slave Controller</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Master=mainDevice</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Slave=SecondaryDevice
-</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'> </span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Packet
-Type</span></p>
-
-<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 title=""
- summary="" style='border-collapse:collapse;border:none'>
- <tr>
-  <td width=93 valign=top style='width:69.75pt;border:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Packet
-  Type</span></p>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Number</span></p>
-  </td>
-  <td width=82 valign=top style='width:61.85pt;border:solid #A3A3A3 1.0pt;
-  border-left:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Description</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>0</span></p>
-  </td>
-  <td width=84 valign=top style='width:63.3pt;border-top:none;border-left:none;
-  border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>IDLE
-  packet</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1</span></p>
-  </td>
-  <td width=84 valign=top style='width:63.0pt;border-top:none;border-left:none;
-  border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>INIT
-  packet</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=91 valign=top style='width:68.4pt;border:solid #A3A3A3 1.0pt;
-  border-top:none;padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
-  <td width=78 valign=top style='width:58.25pt;border-top:none;border-left:
-  none;border-bottom:solid #A3A3A3 1.0pt;border-right:solid #A3A3A3 1.0pt;
-  padding:4.0pt 4.0pt 4.0pt 4.0pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-  lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-  </td>
- </tr>
+<h2>PHY Interfaces</h2>
+<p>EtherChain supports the following <strong>Single Pair Ethernet (SPE)</strong> PHYs:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Interface</th>
+      <th>Max Chain Length</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>100BaseT1 Full Duplex</td>
+      <td>15 meters</td>
+    </tr>
+  </tbody>
 </table>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Runs on
-IEEE 802.3bw (BroadR-Reach) PHY</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Based on
-EtherCat type daisy chain cut through data.  Data looped back at end of chain.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Etherchain
-frame:</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>7 bytes
-Start of Frame: 10101010</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte Start
-of Frame Delimiter: 10101011</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte
-Packet type</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte
-packet sequence number (rollover) used for detecting lost packets</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte hop
-number (gets incremented every time the packet is retransmitted to the next
-level)</span></p>
-
-<p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-margin-left:27.0pt;line-height:normal'><span lang=EN-US style='font-size:11.0pt;
-font-family:"Calibri",sans-serif'>2 bytes datagram address</span></p>
-
-<p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-margin-left:27.0pt;line-height:normal'><span lang=EN-US style='font-size:11.0pt;
-font-family:"Calibri",sans-serif'>1 byte  MD datagram length</span></p>
-
-<p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-margin-left:27.0pt;line-height:normal'><span lang=EN-US style='font-size:11.0pt;
-font-family:"Calibri",sans-serif'>1 byte  MD write length</span></p>
-
-<p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-margin-left:27.0pt;line-height:normal'><span lang=EN-US style='font-size:11.0pt;
-font-family:"Calibri",sans-serif'>1 byte    SD write length</span></p>
-
-<p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-margin-left:27.0pt;line-height:normal'><span lang=EN-US style='font-size:11.0pt;
-font-family:"Calibri",sans-serif'>Y bytes of hop X datagram</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>…</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>4 bytes
-CRC/FCS frame check</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>12 bytes
-Interframe Gap</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>Datagram</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte
-type</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Type 01
-datagram Write to register</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>  1 byte
-address</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>  X bytes
-data (address increments)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Type 02
-datagram write to comm fifo</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-family:"Calibri",sans-serif;color:#5B9BD5'>0 IDLE packet
-type</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>This
-packet does not contain any datagrams.  When a SD receives this packet it must
-immediately go to IDLE state.  This is used to determine the number of hops in
-the loop.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-family:"Calibri",sans-serif;color:#5B9BD5'>1 INIT packet
-type</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>This
-packet contains the same datagram format as the Run packet type except that it
-is only used for reading and writing initialization registers.  255 bytes of
-data which are all set to 0 by the master.  The slaves will then insert their
-subDevice ID number into the appropriate byte which corresponds to the hop
-number.  If a slave does not have an ID assigned yet it will insert 0.  The
-master must then assign it a proper number.  Once the master receives a packet
-with all the proper ID's it can go to the next state.  The slave will take note
-of its hop number and respond to that hop.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Format:</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte
-Number of Hops detected by the previous poll</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-family:"Calibri",sans-serif;color:#5B9BD5'>2 RUN packet
-type</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>This
-packet is used to communicate with individual subDevices.  It is like a virtual
-COM port to each subDevice.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Format:</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte SD
-interrupt register</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>2 bytes
-registers</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte COM
-length  //of hop 1</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 to 255
-bytes data</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>2 bytes
-registers</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 byte COM
-length //of hop 2</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>1 to 255
-bytes data</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>…</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>Interrupt
-Register</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>4 Interrupt
-bits (MD writing to these bits will clear them)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>4 bits COM
-request (Request next data packet size X 4)</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>subDevice
-bandwidth request.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>When a
-subDevice has data to send to the master it will buffer the data in a fifo and
-enter the fill level into the appropriate Hop Length field so that the
-MainDevice will increase the HopLength in the next frame.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>SD write
-request</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>The Read
-length is the amount of data in the slave fifo.  If this is larger than the
-write length then the amount of data sent is equal to the write length.  The
-master will then subtract the read length from the write length and if there is
-a remainder (negative) it will increase the datagram size by that amount on the
-next frame.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>If the
-mainDevice detects an unexpected hop number it immediately switches back to
-init state and all subDevices go into init mode.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><b><span
-lang=EN-US style='font-size:14.0pt;font-family:"Calibri",sans-serif;color:#2E75B5'>3
-Loopback packet type</span></b></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;line-height:normal'><span
-lang=EN-US style='font-size:11.0pt;font-family:"Calibri",sans-serif'>This
-packet type indicated that it has been looped back by an open port on the last
-SD device on the chain.  The FCS will have been recalculated and will not be
-monitored or altered by the other SD devices in the chain.  If a master port
-encounters this type of packet it will automatically switch ports.</span></p>
-
-<p class=MsoNormal>&nbsp;</p>
-
-</div>
-
-</body>
-
-</html>
+<ul>
+  <li>Based on <strong>daisy chain cut-through</strong> data flow</li>
+  <li>Data is looped back at the end of the chain</li>
+</ul>
+<hr>
+
+<h2>Serial over EtherMUX</h2>
+<p>While <strong>IÂ²C</strong> is common for sensors and peripherals, its limited range and turnaround time make it unsuitable for long-distance or time-critical reads. EtherChain offers a more robust alternative.</p>
+<hr>
+
+<h2>EtherMUX vs Ethernet</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Standard Ethernet</th>
+      <th>EtherMUX</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Topology</td>
+      <td>Star (point-to-point)</td>
+      <td>Daisy chain</td>
+    </tr>
+    <tr>
+      <td>Switch Requirement</td>
+      <td>Requires switch/router</td>
+      <td>No switch required</td>
+    </tr>
+    <tr>
+      <td>Device Communication</td>
+      <td>Peer-to-peer possible</td>
+      <td>Only MD-to-SD and SD to MD communication</td>
+    </tr>
+  </tbody>
+</table>
+<hr>
+
+<h2>EtherMUX vs EtherCAT</h2>
+<p><strong>EtherChain</strong> shares EtherCATâ€™s low-latency philosophy but avoids its complexity:</p>
+<ul>
+  <li>No backward compatibility burden</li>
+  <li>Lightweight and easy to implement</li>
+  <li>Does <strong>not</strong> support 3-port branching devices</li>
+</ul>
+<hr>
+
+<h2>Single Pair Ethernet (SPE) Integration</h2>
+<p>EtherMUX optimizes SPE by:</p>
+<ul>
+  <li>Removing Ethernet headers to save bandwidth and reduce latency</li>
+  <li>Eliminating MAC addresses (All packets are broadcast to all nodes)</li>
+  <li>Using a <strong>bridge protocol</strong> on the MD to interface with standard Ethernet networks</li>
+</ul>
+<hr>
+
+<h2>Time Synchronization</h2>
+<p>EtherMUX supports a <strong>Distributed Clock</strong> mechanism to synchronize all SD devices with the MDâ€™s master clock, ensuring precise timing across the network.</p>
+<hr>
+
+<h2>Philosophy</h2>
+<p>EtherMUX is driven by a commitment to <strong>low cost and simplicity</strong>:</p>
+<ul>
+  <li>Minimizes component cost, CPU load, power consumption, and system complexity</li>
+  <li>Reduces labor costs by keeping the system understandable and maintainable</li>
+  <li>Prioritizes simplicity over feature creep to avoid escalating system costs</li>
+</ul>
+<hr>
